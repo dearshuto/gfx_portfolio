@@ -1,4 +1,5 @@
-use crate::IDemoImpl;
+use std::borrow::Cow;
+
 use futures_intrusive::channel::shared::GenericOneshotReceiver;
 use parking_lot::RawMutex;
 use wgpu::{util::DeviceExt, BufferAsyncError};
@@ -15,27 +16,31 @@ pub struct Triangle<'a> {
     _merker: std::marker::PhantomData<&'a ()>,
 }
 
-impl<'a> IDemoImpl<'a> for Triangle<'a> {
-    type TParams = TriangleParams;
-
-    fn new(device: &wgpu::Device, target_format: wgpu::TextureFormat) -> Self {
+impl<'a> Triangle<'a> {
+    pub fn new(device: &wgpu::Device, target_format: wgpu::TextureFormat) -> Self {
         let vertex_shader_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
-            source: wgpu::util::make_spirv(include_bytes!("outputs/triangle.vs.spv")),
+            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("triangle.vs.wgsl"))),
         });
         let pixel_shader_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
-            source: wgpu::util::make_spirv(include_bytes!("outputs/triangle.fs.spv")),
+            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("triangle.fs.wgsl"))),
         });
 
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: None,
-            layout: None,
+            layout: Some(
+                &device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                    label: None,
+                    bind_group_layouts: &[],
+                    push_constant_ranges: &[],
+                }),
+            ),
             vertex: wgpu::VertexState {
                 module: &vertex_shader_module,
                 entry_point: "main",
                 buffers: &[wgpu::VertexBufferLayout {
-                    array_stride: (std::mem::size_of::<f32>() * 2) as u64,
+                    array_stride: (std::mem::size_of::<f32>() * 2) as wgpu::BufferAddress,
                     step_mode: wgpu::VertexStepMode::Vertex,
                     attributes: &[wgpu::VertexAttribute {
                         format: wgpu::VertexFormat::Float32x2,
@@ -78,7 +83,7 @@ impl<'a> IDemoImpl<'a> for Triangle<'a> {
         }
     }
 
-    fn update(
+    pub fn update(
         &mut self,
         _params: &TriangleParams,
     ) -> GenericOneshotReceiver<RawMutex, Result<(), BufferAsyncError>> {
@@ -89,7 +94,7 @@ impl<'a> IDemoImpl<'a> for Triangle<'a> {
         receiver
     }
 
-    fn draw(&'a self, render_pass: &mut wgpu::RenderPass<'a>) {
+    pub fn draw(&'a self, render_pass: &mut wgpu::RenderPass<'a>) {
         render_pass.set_pipeline(&self.render_pipeline);
         render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
         render_pass.draw(0..3, 0..1);

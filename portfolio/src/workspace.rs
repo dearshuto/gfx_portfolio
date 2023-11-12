@@ -11,6 +11,10 @@ impl Workspace {
         }
     }
 
+    pub fn update(&mut self, _device: &wgpu::Device, _queue: &wgpu::Queue) {}
+
+    pub fn draw<'a>(&self, _render_pass: &mut wgpu::RenderPass<'a>) {}
+
     pub fn get_demo_types() -> &'static [(DemoType, &'static str)] {
         &[
             (DemoType::Triangle, "Triangle"),
