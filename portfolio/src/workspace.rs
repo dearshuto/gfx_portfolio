@@ -18,6 +18,7 @@ impl Workspace {
     pub fn get_demo_types() -> &'static [(DemoType, &'static str)] {
         &[
             (DemoType::Triangle, "Triangle"),
+            (DemoType::Mandelbrot, "Mandelbrot"),
             (DemoType::Model3d, "Model3d"),
             (DemoType::Tetris, "Tetris"),
             (DemoType::Physics, "Physics"),

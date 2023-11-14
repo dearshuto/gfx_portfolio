@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex};
 //mod mandelbrot;
 mod workspace;
 
-use demolib::Triangle;
+use demolib::{Mandelbrot, Triangle};
 use eframe::egui_wgpu::{CallbackResources, CallbackTrait};
 use futures_intrusive::channel::shared::GenericOneshotReceiver;
 
@@ -15,6 +15,7 @@ pub use workspace::Workspace;
 #[derive(PartialEq, Clone, Copy)]
 pub enum DemoType {
     Triangle,
+    Mandelbrot,
     Model3d,
     Physics,
     Tetris,
@@ -23,6 +24,7 @@ pub enum DemoType {
 pub struct DemoManager<'a> {
     workspace: Arc<Mutex<Workspace>>,
     triangle: Triangle<'a>,
+    mandelbrot: Mandelbrot<'a>,
 }
 
 impl<'a> DemoManager<'a> {
@@ -34,6 +36,7 @@ impl<'a> DemoManager<'a> {
         Self {
             workspace,
             triangle: Triangle::new(&device, target),
+            mandelbrot: Mandelbrot::new(&device, target),
         }
     }
 
@@ -47,10 +50,11 @@ impl<'a> DemoManager<'a> {
 
     pub async fn do_something(&mut self) {}
 
-    pub fn draw(&'a self, _render_pass: &mut wgpu::RenderPass<'a>) {
+    pub fn draw(&'a self, render_pass: &mut wgpu::RenderPass<'a>) {
         let workspace = self.workspace.lock().unwrap();
         match workspace.get_current_demo_type() {
-            DemoType::Triangle => { /*self.triangle.draw(render_pass)*/ }
+            DemoType::Triangle => self.triangle.draw(render_pass),
+            DemoType::Mandelbrot => self.mandelbrot.draw(render_pass),
             _ => {}
         }
     }
@@ -110,6 +114,6 @@ impl CallbackTrait for RenderBridge {
             return;
         };
 
-        demo_manager.triangle.draw(render_pass);
+        demo_manager.draw(render_pass);
     }
 }

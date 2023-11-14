@@ -3,23 +3,35 @@ use std::{collections::HashMap, fs::File, io::Write};
 use naga::back::wgsl::WriterFlags;
 
 fn main() {
-    {
-        let vertex_shader_binary = convert_to_spv(
-            include_str!("resources/shaders/triangle.vs"),
+    let targets = [
+        (
+            "resources/shaders/triangle.vs",
+            "src/triangle.vs.wgsl",
             naga::ShaderStage::Vertex,
-        );
-        let mut vertex_shader_binary_file = File::create("src/triangle.vs.wgsl").unwrap();
+        ),
+        (
+            "resources/shaders/triangle.fs",
+            "src/triangle.fs.wgsl",
+            naga::ShaderStage::Fragment,
+        ),
+        (
+            "resources/shaders/mandelbrot.vs",
+            "src/mandelbrot.vs.wgsl",
+            naga::ShaderStage::Vertex,
+        ),
+        (
+            "resources/shaders/mandelbrot.fs",
+            "src/mandelbrot.fs.wgsl",
+            naga::ShaderStage::Fragment,
+        ),
+    ];
+
+    for (src, dst, stage) in targets {
+        let source = std::fs::read_to_string(src).unwrap();
+        let vertex_shader_binary = convert_to_spv(&source, stage);
+        let mut vertex_shader_binary_file = File::create(dst).unwrap();
         vertex_shader_binary_file
             .write_all(&vertex_shader_binary)
-            .unwrap();
-
-        let pixel_shader_binary = convert_to_spv(
-            include_str!("resources/shaders/triangle.fs"),
-            naga::ShaderStage::Fragment,
-        );
-        let mut pixel_shader_binary_file = File::create("src/triangle.fs.wgsl").unwrap();
-        pixel_shader_binary_file
-            .write_all(&pixel_shader_binary)
             .unwrap();
     }
 }
