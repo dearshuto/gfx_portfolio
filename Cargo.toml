@@ -5,9 +5,9 @@ members = [
     "portfolio",
     "triangle"
 ]
+default-members = ["portfolio"]
 
 [workspace.dependencies]
-
 eframe = { version = "0.23.0", default-features=false, features = ["wgpu", "accesskit", "default_fonts", "persistence"] }
 
 # eframe の内部で参照している wgpu のバージョンと合わせる
