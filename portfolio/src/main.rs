@@ -1,7 +1,7 @@
+use eframe::{egui_wgpu::Callback, CreationContext};
 use std::sync::{Arc, Mutex};
 
-use demolib::Workspace;
-use eframe::CreationContext;
+use portfolio::{DemoManager, RenderBridge, Workspace};
 
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
@@ -22,10 +22,7 @@ fn main() {
 fn run(runtime: Arc<tokio::runtime::Runtime>) {
     #[cfg(not(target_arch = "wasm32"))]
     {
-        let options = eframe::NativeOptions {
-            renderer: eframe::Renderer::Wgpu,
-            ..Default::default()
-        };
+        let options = eframe::NativeOptions::default();
 
         eframe::run_native(
             "My Window",
@@ -64,15 +61,14 @@ impl App {
         if let Some(render_state) = &context.wgpu_render_state {
             let target_format = render_state.target_format;
             let device = render_state.device.clone();
-            let demo_manager =
-                demolib::DemoManager::new(workspace.clone(), device.clone(), target_format);
-            let _ = context
+            let demo_manager = DemoManager::new(workspace.clone(), device.clone(), target_format);
+            context
                 .wgpu_render_state
                 .as_ref()
                 .unwrap()
                 .renderer
                 .write()
-                .paint_callback_resources
+                .callback_resources
                 .insert(demo_manager);
             Self { workspace, runtime }
         } else {
@@ -104,38 +100,7 @@ impl eframe::App for App {
                     eframe::egui::Sense::drag(),
                 );
 
-                let callback = {
-                    let function = eframe::egui_wgpu::CallbackFn::new()
-                        .prepare(move |_device, _queue, _command_encoder, render_resources| {
-                            let demo_manager: &mut demolib::DemoManager =
-                                render_resources.get_mut().unwrap();
-
-                            /*
-                            let task = tokio::spawn(async {
-
-                                for _index in 0..3 {
-                                     println!("Update");
-                                     std::thread::sleep(std::time::Duration::from_millis(10));
-                                }
-                            });
-                            */
-
-                            demo_manager.update();
-
-                            // futures::executor::block_on(task).unwrap();
-                            Vec::default()
-                        })
-                        .paint(move |_info, render_pass, render_resources| {
-                            let demo_manager: &demolib::DemoManager =
-                                render_resources.get().unwrap();
-                            demo_manager.draw(render_pass);
-                        });
-                    eframe::egui::PaintCallback {
-                        rect,
-                        callback: Arc::new(function),
-                    }
-                };
-
+                let callback = Callback::new_paint_callback(rect, RenderBridge::new());
                 ui.painter().add(callback);
             });
         });

@@ -1,41 +1,19 @@
-[package]
-name = "standalone"
-edition = "2021"
-version = "0.1.0"
+[workspace]
+resolver = "2"
+members = [
+    "demolib",
+    "portfolio",
+    "triangle"
+]
 
-[lib]
-name = "demolib"
-path = "portfolio/lib.rs"
+[workspace.dependencies]
 
-[[bin]]
-name = "portfolio"
-path = "portfolio/main.rs"
+eframe = { version = "0.23.0", default-features=false, features = ["wgpu", "accesskit", "default_fonts", "persistence"] }
 
-[dependencies]
-eframe = { version = "0.22.0", default-features=false, features = ["wgpu", "accesskit", "default_fonts"] }
+# eframe の内部で参照している wgpu のバージョンと合わせる
+wgpu = { version = "0.17.0", features = [ "spirv", "webgl", "vulkan-portability"] }
 
-# wgpu の webgl 指定を明示しないとウェブむけビルドが通らない
-wgpu = { version = "0.16.0", features = ["spirv", "webgl"] }
+# wgpu が参照している winit のバージョンと合わせる
+winit = "0.28.7"
 
-# eframe に合わせる
-wasm-bindgen-futures = "*"
-
-# wgpu の
-parking_lot = "0.12"
-
-# wgpu でバッファーに書き込処理の実装に必要なクレートたち
-bytemuck = "*"
-futures = "*"
-futures-intrusive = "*"
-
-
-# rt-multi-thread はネイティブのみ
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-tokio = { version = "1.29", features = ["sync", "macros", "io-util", "rt", "rt-multi-thread", "time"] }
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-tokio = { version = "1.29", features = ["sync", "macros", "io-util", "rt", "time"] }
-
-
-[build-dependencies]
-naga = { version = "0.12.2", features = ["glsl-in", "spv-out"] }
+naga = { version = "0.13.0", features = ["glsl-in", "wgsl-out"] }

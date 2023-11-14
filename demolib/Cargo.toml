@@ -1,0 +1,23 @@
+[package]
+name = "demolib"
+edition = "2021"
+version = "0.1.0"
+
+[dependencies]
+wgpu = { workspace = true }
+
+winit = { workspace = true }
+
+# eframe に合わせる
+wasm-bindgen-futures = "*"
+
+# wgpu の
+parking_lot = "0.12"
+
+# wgpu でバッファーに書き込処理の実装に必要なクレートたち
+bytemuck = "*"
+futures = "*"
+futures-intrusive = "*"
+
+[build-dependencies]
+naga = { workspace = true }
