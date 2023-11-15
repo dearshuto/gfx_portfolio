@@ -1,7 +1,7 @@
 use eframe::{egui_wgpu::Callback, CreationContext};
 use std::sync::{Arc, Mutex};
 
-use portfolio::{DemoManager, RenderBridge, Workspace};
+use portfolio::{DemoManager, PropertyPanel, RenderBridge, Workspace};
 
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
@@ -53,6 +53,7 @@ struct App {
     #[allow(dead_code)]
     runtime: Arc<tokio::runtime::Runtime>,
     workspace: Arc<Mutex<Workspace>>,
+    property_panel: PropertyPanel,
 }
 
 impl App {
@@ -70,9 +71,17 @@ impl App {
                 .write()
                 .callback_resources
                 .insert(demo_manager);
-            Self { workspace, runtime }
+            Self {
+                workspace: workspace.clone(),
+                runtime,
+                property_panel: PropertyPanel::new(workspace.clone()),
+            }
         } else {
-            Self { runtime, workspace }
+            Self {
+                runtime,
+                workspace: workspace.clone(),
+                property_panel: PropertyPanel::new(workspace.clone()),
+            }
         }
     }
 }
@@ -91,6 +100,13 @@ impl eframe::App for App {
                     ui.radio_value(&mut current_demo_type, *demo_type, *lanel);
                 }
                 workspace.set_demo_type(current_demo_type);
+            });
+        eframe::egui::SidePanel::right("Property")
+            .resizable(true)
+            .default_width(150.0)
+            .show(ctx, |ui| {
+                ui.heading("Properties");
+                self.property_panel.draw(ui);
             });
 
         eframe::egui::CentralPanel::default().show(ctx, |ui| {
