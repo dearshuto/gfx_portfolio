@@ -1,11 +1,13 @@
 use std::sync::{Arc, Mutex};
 
 //mod mandelbrot;
+mod property_panel;
 mod workspace;
 
 use demolib::{Mandelbrot, Triangle};
 use eframe::egui_wgpu::{CallbackResources, CallbackTrait};
 use futures_intrusive::channel::shared::GenericOneshotReceiver;
+pub use property_panel::PropertyPanel;
 
 //pub use mandelbrot::Mandelbrot;
 use parking_lot::RawMutex;
