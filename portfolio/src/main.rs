@@ -96,7 +96,7 @@ impl eframe::App for App {
         eframe::egui::CentralPanel::default().show(ctx, |ui| {
             eframe::egui::Frame::canvas(ui.style()).show(ui, |ui| {
                 let (rect, _response) = ui.allocate_exact_size(
-                    eframe::egui::vec2(400.0, 400.0),
+                    eframe::egui::vec2(700.0, 700.0),
                     eframe::egui::Sense::drag(),
                 );
 
