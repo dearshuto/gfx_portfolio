@@ -12,7 +12,7 @@ impl Workspace {
         Self {
             demo_type: DemoType::Triangle,
             triangle_params: TriangleParams {
-                color: Default::default(),
+                color: [0.1, 0.2, 0.3],
             },
         }
     }
@@ -37,6 +37,10 @@ impl Workspace {
 
     pub fn set_demo_type(&mut self, demo_type: DemoType) {
         self.demo_type = demo_type;
+    }
+
+    pub fn get_triangle_params(&self) -> &TriangleParams {
+        &self.triangle_params
     }
 
     pub fn get_triangle_params_mut(&mut self) -> &mut TriangleParams {
