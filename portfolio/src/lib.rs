@@ -42,12 +42,10 @@ impl<'a> DemoManager<'a> {
         }
     }
 
-    pub fn update(&mut self) {
-        // let workspace = self.workspace.lock().unwrap();
-        // match workspace.get_current_demo_type() {
-        //     DemoType::Triangle => self.triangle.update(),
-        //     _ => {}
-        // }
+    pub fn update(&mut self, queue: &wgpu::Queue) {
+        let workspace = self.workspace.lock().unwrap();
+        let triangle_params = workspace.get_triangle_params();
+        self.triangle.update(queue, triangle_params);
     }
 
     pub async fn do_something(&mut self) {}
@@ -93,7 +91,7 @@ impl CallbackTrait for RenderBridge {
     fn prepare(
         &self,
         _device: &wgpu::Device,
-        _queue: &wgpu::Queue,
+        queue: &wgpu::Queue,
         _egui_encoder: &mut wgpu::CommandEncoder,
         callback_resources: &mut CallbackResources,
     ) -> Vec<wgpu::CommandBuffer> {
@@ -101,7 +99,7 @@ impl CallbackTrait for RenderBridge {
             return Vec::new();
         };
 
-        demo_manager.update();
+        demo_manager.update(queue);
 
         Vec::new()
     }
