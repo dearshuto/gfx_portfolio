@@ -8,6 +8,10 @@ wgpu = { workspace = true }
 
 winit = { workspace = true }
 
+usd-rs = { workspace = true }
+
+nalgebra-glm = { workspace = true }
+
 # eframe に合わせる
 wasm-bindgen-futures = "*"
 

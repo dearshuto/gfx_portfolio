@@ -5,43 +5,13 @@ use naga::back::wgsl::WriterFlags;
 fn main() {
     let targets = [
         (
-            "resources/shaders/triangle.vs",
-            "src/triangle.vs.wgsl",
+            "res/shaders/draw_texture.vs",
+            "src/draw_texture.vs.wgsl",
             naga::ShaderStage::Vertex,
         ),
         (
-            "resources/shaders/triangle.fs",
-            "src/triangle.fs.wgsl",
-            naga::ShaderStage::Fragment,
-        ),
-        (
-            "resources/shaders/mandelbrot.vs",
-            "src/mandelbrot.vs.wgsl",
-            naga::ShaderStage::Vertex,
-        ),
-        (
-            "resources/shaders/mandelbrot.fs",
-            "src/mandelbrot.fs.wgsl",
-            naga::ShaderStage::Fragment,
-        ),
-        (
-            "resources/shaders/mandelbrot.vs",
-            "src/mandelbrot.vs.wgsl",
-            naga::ShaderStage::Vertex,
-        ),
-        (
-            "resources/shaders/mandelbrot.fs",
-            "src/mandelbrot.fs.wgsl",
-            naga::ShaderStage::Fragment,
-        ),
-        (
-            "resources/shaders/model_3d.vs",
-            "src/model_3d.vs.wgsl",
-            naga::ShaderStage::Vertex,
-        ),
-        (
-            "resources/shaders/model_3d.fs",
-            "src/model_3d.fs.wgsl",
+            "res/shaders/draw_texture.fs",
+            "src/draw_texture.fs.wgsl",
             naga::ShaderStage::Fragment,
         ),
     ];

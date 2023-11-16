@@ -17,3 +17,10 @@ wgpu = { version = "0.17.0", features = [ "spirv", "webgl", "vulkan-portability"
 winit = "0.28.7"
 
 naga = { version = "0.13.0", features = ["glsl-in", "wgsl-out"] }
+
+# usd ファイルのデシリアライズ
+usd-rs = { git = "https://github.com/dearshuto/usd-rs.git", rev = "caff051" }
+
+# 線形代数
+nalgebra = { version = "0.32.3" }
+nalgebra-glm = "*"
