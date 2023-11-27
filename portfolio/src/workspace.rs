@@ -26,8 +26,6 @@ impl Workspace {
             (DemoType::Triangle, "Triangle"),
             (DemoType::Mandelbrot, "Mandelbrot"),
             (DemoType::Model3d, "Model3d"),
-            (DemoType::Tetris, "Tetris"),
-            (DemoType::Physics, "Physics"),
         ]
     }
 
